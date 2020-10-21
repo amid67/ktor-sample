@@ -7,10 +7,9 @@ import com.raywenderlich.core.model.Respond
 import io.ktor.auth.jwt.*
 import java.util.*
 
-class JwtService {
+class JwtService(jwtSecret: String) {
 
     private val issuer = "todoServer"
-    private val jwtSecret = System.getenv("JWT_SECRET")
     private val algorithm = Algorithm.HMAC512(jwtSecret)
     val verifier: JWTVerifier = JWT
         .require(algorithm)

@@ -4,15 +4,23 @@ import io.ktor.util.*
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
-@KtorExperimentalAPI
-val hashKey = hex(System.getenv("SECRET_KEY")) // 2
+object Auth {
 
-@KtorExperimentalAPI
-val hmacKey = SecretKeySpec(hashKey, "HmacSHA1") // 3
+    private lateinit var secretKey: String
+    fun init(secretKey: String){
+        this.secretKey = secretKey
+    }
 
-@KtorExperimentalAPI
-fun String.toHash(): String { // 4
-    val hmac = Mac.getInstance("HmacSHA1")
-    hmac.init(hmacKey)
-    return hex(hmac.doFinal(toByteArray(Charsets.UTF_8)))
+    @KtorExperimentalAPI
+    private val hashKey = hex("898748674728934843")
+
+    @KtorExperimentalAPI
+    private val hmacKey = SecretKeySpec(hashKey, "HmacSHA1")
+
+    @KtorExperimentalAPI
+    fun convertToHash(password: String): String {
+        val hmac = Mac.getInstance("HmacSHA1")
+        hmac.init(hmacKey)
+        return hex(hmac.doFinal(password.toByteArray(Charsets.UTF_8)))
+    }
 }

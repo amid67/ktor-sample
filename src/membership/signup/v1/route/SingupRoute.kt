@@ -1,8 +1,8 @@
 package com.raywenderlich.membership.signup.v1.route
 
+import com.raywenderlich.auth.Auth
 import com.raywenderlich.auth.JwtService
 import com.raywenderlich.auth.MySession
-import com.raywenderlich.auth.toHash
 import com.raywenderlich.core.model.Respond
 import com.raywenderlich.membership.MembershipConstants
 import com.raywenderlich.membership.signup.v1.entity.SignupReceiveRequest
@@ -33,7 +33,7 @@ fun Route.signup(
                 Respond.Error(HttpStatusCode.BadRequest.value, "Missing password field")
             )
             else -> {
-                val hash = password.toHash()
+                val hash = Auth.convertToHash(password)
                 try {
                     when (val resultFindUser = signupRepository.findUserByUsername(username)) {
                         is Respond.Success -> {

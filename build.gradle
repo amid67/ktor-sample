@@ -1,12 +1,13 @@
 buildscript {
     repositories {
         jcenter()
+        maven { url "https://plugins.gradle.org/m2/" }
     }
     
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.koin:koin-gradle-plugin:2.1.3"
-        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.4'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:5.1.0'
     }
 }
 
@@ -14,14 +15,8 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'kotlin'
 apply plugin: 'application'
 
-group 'com.raywenderlich'
-version '0.0.1'
 mainClassName = 'io.ktor.server.netty.EngineMain'
-//shadowJar {
-//    manifest {
-//        attributes 'Main-Class': mainClassName
-//    }
-//}
+
 sourceSets {
     main.kotlin.srcDirs = main.java.srcDirs = ['src']
     test.kotlin.srcDirs = test.java.srcDirs = ['test']
@@ -52,7 +47,16 @@ dependencies {
     implementation "com.zaxxer:HikariCP:$hikaricp_version"
     implementation 'io.github.microutils:kotlin-logging-jvm:2.0.2'
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
+    implementation "io.ktor:ktor-html-builder:$ktor_version"
     // Koin
     implementation "org.koin:koin-ktor:2.1.3"
     implementation "org.koin:koin-logger-slf4j:2.1.3"
+}
+
+kotlin.experimental.coroutines = 'enable'
+
+shadowJar {
+    archivesBaseName = 'my-application'
+    archiveClassifier = null
+    archiveVersion = null
 }

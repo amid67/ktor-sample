@@ -9,7 +9,16 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
 
-    fun init() {
+    private lateinit var jdbcDriver:String
+    private lateinit var jdbcDatabaseDriver:String
+    private lateinit var dbUsername:String
+    private lateinit var dbPassword:String
+
+    fun init(jdbcDriver: String,jdbcDatabaseDriver: String, dbUsername: String,dbPassword: String) {
+        this.jdbcDriver = jdbcDriver
+        this.jdbcDatabaseDriver = jdbcDatabaseDriver
+        this.dbUsername = dbUsername
+        this.dbPassword = dbPassword
         Database.connect(hikari())
         transaction {
             SchemaUtils.create(UserEntity)
@@ -18,13 +27,13 @@ object DatabaseFactory {
 
     private fun hikari(): HikariDataSource {
         val config = HikariConfig().apply {
-            driverClassName = System.getenv("JDBC_DRIVER")
-            jdbcUrl = System.getenv("JDBC_DATABASE_URL")
+            driverClassName = jdbcDriver
+            jdbcUrl = jdbcDatabaseDriver
             maximumPoolSize = 3
             isAutoCommit = false
             transactionIsolation = "TRANSACTION_REPEATABLE_READ"
-            username = System.getenv("DB_USERNAME")
-            password = System.getenv("DB_PASS")
+            username = dbUsername
+            password = dbPassword
         }
         config.validate()
         return HikariDataSource(config)

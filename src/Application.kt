@@ -1,5 +1,6 @@
 package com.raywenderlich
 
+import com.raywenderlich.auth.Auth
 import com.raywenderlich.auth.JwtService
 import com.raywenderlich.auth.MySession
 import com.raywenderlich.core.model.Respond
@@ -17,10 +18,13 @@ import io.ktor.auth.*
 import io.ktor.auth.jwt.*
 import io.ktor.gson.*
 import io.ktor.features.*
+import io.ktor.html.*
 import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.sessions.*
 import io.ktor.util.*
+import kotlinx.html.body
+import kotlinx.html.p
 import org.koin.core.logger.Level
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.inject
@@ -28,15 +32,12 @@ import org.koin.logger.slf4jLogger
 import java.text.DateFormat
 import javax.security.sasl.AuthenticationException
 
-val port = System.getenv("PORT")?.toInt() ?: 23567
-
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 @KtorExperimentalAPI
 @KtorExperimentalLocationsAPI
 @Suppress("unused")
 fun Application.module() {
-
     install(DefaultHeaders)
     install(CallLogging)
     install(Sessions) {
@@ -54,11 +55,19 @@ fun Application.module() {
         slf4jLogger(Level.ERROR)
         modules(appModules, membershipModule)
     }
-    DatabaseFactory.init()
+    val jwtSecret = environment.config.property("jwt.jwtSecret").getString()
+    val secretKey = environment.config.property("jwt.secretKey").getString()
+    val jdbcDriver = environment.config.property("database.jdbcDriver").getString()
+    val jdbcDatabaseDriver = environment.config.property("database.jdbcDatabaseDriver").getString()
+    val dbUsername = environment.config.property("database.username").getString()
+    val dbPassword = environment.config.property("database.password").getString()
+
+    Auth.init(secretKey)
+    DatabaseFactory.init(jdbcDriver, jdbcDatabaseDriver, dbUsername, dbPassword)
     val signupRepository by inject<SignupRepository>()
     val loginRepository by inject<LoginRepository>()
     val logoutRepository by inject<LogoutRepository>()
-    val jwtService by inject<JwtService>()
+    val jwtService = JwtService(jwtSecret)
 
     install(Authentication) {
         jwt("jwt") {
@@ -96,6 +105,15 @@ fun Application.module() {
         login(loginRepository, jwtService)
         authenticate("jwt") {
             logout(logoutRepository)
+        }
+        get("/") {
+            call.respondHtml {
+                body {
+                    p {
+                        +"Hello from Ktor Amid Rudsari"
+                    }
+                }
+            }
         }
     }
 
