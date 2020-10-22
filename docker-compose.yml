@@ -1,0 +1,21 @@
+version: "3.7"
+services:
+  db:
+    image: postgres:13-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: "users"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "85210841"
+      POSTGRES_ROOT_PASSWORD: "85210841"
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: .
+    mem_limit: 300m
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - "db"
