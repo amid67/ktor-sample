@@ -4,18 +4,18 @@ services:
     image: postgres:13-alpine
     restart: always
     environment:
-      POSTGRES_DB: "users"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "85210841"
-      POSTGRES_ROOT_PASSWORD: "85210841"
+      - POSTGRES_DB=users
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=85210841
+      - POSTGRES_ROOT_PASSWORD=85210841
     ports:
       - "5432:5432"
 
   backend:
-    build: .
+    image: my-application:latest
     mem_limit: 300m
     restart: always
     ports:
       - "8080:8080"
     depends_on:
-      - "db"
+      - db
