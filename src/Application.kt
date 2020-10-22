@@ -38,6 +38,7 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @KtorExperimentalLocationsAPI
 @Suppress("unused")
 fun Application.module() {
+    initDB()
     install(DefaultHeaders)
     install(CallLogging)
     install(Sessions) {
@@ -57,13 +58,8 @@ fun Application.module() {
     }
     val jwtSecret = environment.config.property("jwt.jwtSecret").getString()
     val secretKey = environment.config.property("jwt.secretKey").getString()
-    val jdbcDriver = environment.config.property("database.jdbcDriver").getString()
-    val jdbcDatabaseDriver = environment.config.property("database.jdbcDatabaseDriver").getString()
-    val dbUsername = environment.config.property("database.username").getString()
-    val dbPassword = environment.config.property("database.password").getString()
 
     Auth.init(secretKey)
-    DatabaseFactory.init(jdbcDriver, jdbcDatabaseDriver, dbUsername, dbPassword)
     val signupRepository by inject<SignupRepository>()
     val loginRepository by inject<LoginRepository>()
     val logoutRepository by inject<LogoutRepository>()
