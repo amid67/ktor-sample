@@ -12,7 +12,7 @@ services:
       - "5432:5432"
 
   backend:
-    image: my-application:latest
+    image: amid88/my-application:latest
     mem_limit: 300m
     restart: always
     ports:
