@@ -1,5 +1,6 @@
 # ktor-sample
 ktor sample, implement simple login/register
+[![CodeFactor](https://www.codefactor.io/repository/github/amid67/ktor-sample/badge)](https://www.codefactor.io/repository/github/amid67/ktor-sample)
 
 This Reporitory under development ...
 
